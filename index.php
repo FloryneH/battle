@@ -1,3 +1,22 @@
+<?php
+    require_once __DIR__ . '/vendor/autoload.php';
+    require 'fonction.php';
+
+    // Démarre une nouvelle session ou restaure une session existante
+    session_start();
+
+    // Gestion du formulaire de création de personnage
+    if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
+        list($formErrors, $player, $adversaire) = checkErrorsForm();
+        if (empty($formErrors)) {
+            setInfoInSession($player, $adversaire);
+            header('Location: match.php');
+        }
+    }
+
+    list($player, $adversaire) = getInfoInSession();
+?>
+
 <html lang="fr">
 <head>
     <title>Battle</title>
@@ -6,42 +25,12 @@
             integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
             crossorigin="anonymous">
     </script>
-    <script src="index.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="public/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 </head>
-
-<?php
-    session_start();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $playerForm = $_POST['player'];
-        $player = [
-            'name' => $playerForm['name'],
-            'attaque' => $playerForm['attaque'],
-            'mana' => $playerForm['mana'],
-            'sante' => $playerForm['sante'],
-        ];
-    
-        $adversaireForm = $_POST['adversaire'];
-        $adversaire = [
-            'name' => $adversaireForm['name'],
-            'attaque' => $adversaireForm['attaque'],
-            'mana' => $adversaireForm['mana'],
-            'sante' => $adversaireForm['sante'],
-        ];
-    
-        $_SESSION['player'] = $player;
-        $_SESSION['adversaire'] = $adversaire;
-    
-        // Rediriger vers la page de combat une fois les données enregistrées
-        header('Location: match.php');
-        exit;
-    }
-?>
 
 <body>
     <div class="container">
@@ -52,23 +41,52 @@
 
                 <div>
                     Joueur <br>
+                    <div class="errors">
+                        <ul>
+                            <?php foreach ($formErrors["player"] ?? [] as $error) { ?>
+                                <li class="text-danger"><?php echo $error ?></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+
                     <div class="row">
+
                         <div class="col-6">
                             <label class="form-label">Name</label>
-                            <input required type="text" class="form-control" name="player[name]">
+                            <input required 
+                                   type="text" 
+                                   class="form-control" 
+                                   name="player[name]"
+                                   value="<?php echo $_POST["player"]["name"] ?? "" ?>">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label">Attaque</label>
-                            <input required type="number" class="form-control" value="100" name="player[attaque]">
+                            <input required 
+                                   type="number" 
+                                   class="form-control <?php echo isset($formErrors["player"]["attaque"]) ? "is-invalid" : "" ?>" 
+                                   name="player[attaque]"
+                                   value="<?php echo $_POST["player"]["attaque"] ?? "100" ?>">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label">Mana</label>
-                            <input required type="number" class="form-control" value="100" name="player[mana]">
+                            <input required 
+                                   type="number" 
+                                   class="form-control <?php echo isset($formErrors["player"]["mana"]) ? "is-invalid" : "" ?>" 
+                                   name="player[mana]"
+                                   value="<?php echo $_POST["player"]["mana"] ?? "100" ?>">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label">Santé</label>
-                            <input required type="number" class="form-control" value="100" name="player[sante]">
+                            <input required 
+                                   type="number" 
+                                   class="form-control <?php echo isset($formErrors["player"]["sante"]) ? "is-invalid" : "" ?>" 
+                                   name="player[sante]"
+                                   value="<?php echo $_POST["player"]["sante"] ?? "100" ?>">
                         </div>
+
                     </div>
                 </div>
 
@@ -76,23 +94,52 @@
 
                 <div>
                     Adversaire <br>
+                    <div class="errors">
+                        <ul>
+                            <?php foreach ($formErrors["adversaire"] ?? [] as $error) { ?>
+                                <li class="text-danger"><?php echo $error ?></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+
                     <div class="row">
+
                         <div class="col-6">
                             <label class="form-label">Name</label>
-                            <input required type="text" class="form-control" name="adversaire[name]">
+                            <input required 
+                                   type="text" 
+                                   class="form-control" 
+                                   name="adversaire[name]"
+                                   value="<?php echo $_POST["adversaire"]["name"] ?? "" ?>">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label">Attaque</label>
-                            <input required type="number" class="form-control" value="100" name="adversaire[attaque]">
+                            <input required 
+                                   type="number" 
+                                   class="form-control <?php echo isset($formErrors["adversaire"]["attaque"]) ? "is-invalid" : "" ?>" 
+                                   name="adversaire[attaque]"
+                                   value="<?php echo $_POST["adversaire"]["attaque"] ?? "100" ?>">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label">Mana</label>
-                            <input required type="number" class="form-control" value="100" name="adversaire[mana]">
+                            <input required 
+                                   type="number" 
+                                   class="form-control <?php echo isset($formErrors["adversaire"]["mana"]) ? "is-invalid" : "" ?>" 
+                                   name="adversaire[mana]"
+                                   value="<?php echo $_POST["adversaire"]["mana"] ?? "100" ?>">
                         </div>
+
                         <div class="col-6">
                             <label class="form-label">Santé</label>
-                            <input required type="number" class="form-control" value="100" name="adversaire[sante]">
+                            <input required 
+                                   type="number" 
+                                   class="form-control <?php echo isset($formErrors["adversaire"]["sante"]) ? "is-invalid" : "" ?>" 
+                                   name="adversaire[sante]"
+                                   value="<?php echo $_POST["adversaire"]["sante"] ?? "100" ?>">
                         </div>
+
                     </div>
                 </div>
 
