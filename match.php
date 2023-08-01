@@ -7,7 +7,6 @@
 
     // Vérifie si les variables de session 'player' et 'adversaire' ne sont pas définies ou sont vides
     if (!isset($_SESSION['player']) || !isset($_SESSION['adversaire'])) {
-        // Redirige vers la page 'index.php' pour demander à l'utilisateur de saisir les données du joueur et de l'adversaire
         header('Location: index.php');
     }
 
@@ -95,7 +94,7 @@
 
                 <div class="d-flex justify-content-center">
                     <input id="attaque" name="attaque" type="submit" value="Attaquer">
-                    <input name="soin" type="submit" value="Se soigner">
+                    <input name="soin" type="submit" value="Se soigner" <?php echo ($player['soins_disabled'] ?? false) ? 'disabled' : ''; ?>>
                 </div>
 
                 <div class="d-flex justify-content-center">

@@ -4,6 +4,10 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
+
+    if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {
+        restart();
+    }
 ?>
 
 <!DOCTYPE html>

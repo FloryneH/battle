@@ -75,6 +75,12 @@
     {
         list($player, $adversaire) = getInfoInSession();
         
+        $player['sante'] -= $adversaire['attaque'];
+
+        if($player['sante'] <= 0 || $adversaire['sante'] <= 0){
+            header('Location: resultats.php');
+        }
+
         setInfoInSession($player, $adversaire);
     }
 
@@ -82,14 +88,26 @@
     {
         list($player, $adversaire) = getInfoInSession();
 
+        $valeurSoustraction = ($player['mana']*20)/100;
+        $valeurSoustractionRound = round($valeurSoustraction);
+        $player['mana'] -= $valeurSoustractionRound;
+
+        $player['sante'] += $valeurSoustractionRound;
+
+        if ($player['mana'] <= 0) {
+            $player['mana'] = 0;
+            $player['soins_disabled'] = true; // Ajoutez une clé 'attaque_disabled' à $player et définissez-la sur true
+        }
+
         setInfoInSession($player, $adversaire);
-        adversaireAction();
+        // adversaireAction();
     }
 
     function restart()
     {
         removeInfoInSession();
         session_destroy();
+        header('Location: index.php');
     }
 
 ?>
