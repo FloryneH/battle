@@ -123,11 +123,40 @@
         setInfoInSession($player, $adversaire, $recap);
     }
 
+    function recap()
+    {
+        list($player, $adversaire, $recap) = getInfoInSession();
+
+        if (isset($recap)) {
+            $lines = explode("<br>", $recap);
+            echo "<ul>";
+            foreach ($lines as $line) {
+                if (!empty($line)) {
+                    echo "<li>" . $line . "</li>";
+                }
+            }
+            echo "</ul>";
+        }
+    }
+
     function restart()
     {
         removeInfoInSession();
         session_destroy();
         header('Location: index.php');
+    }
+
+    function afficherVainqueur()
+    {
+        list($player, $adversaire) = getInfoInSession();
+
+        if ($player['sante'] <= 0 && $adversaire['sante'] <= 0) {
+            echo "<p>Match nul ! Les deux combattants sont à terre.</p>";
+        } elseif ($player['sante'] <= 0) {
+            echo "<p>" . $adversaire['name'] . " est le vainqueur !</p>";
+        } elseif ($adversaire['sante'] <= 0) {
+            echo "<p>" . $player['name'] . " est le vainqueur !</p>";
+        }
     }
 
 ?>

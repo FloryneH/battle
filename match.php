@@ -100,13 +100,7 @@
 
         <div id="combatsResume">
             <h2>Combat</h2>
-            <ul>
-
-                <li>
-                    <?php echo $recap ?? ''; ?>
-                </li>
-
-            </ul>
+            <?php recap() ?>
         </div>
     </div>
 

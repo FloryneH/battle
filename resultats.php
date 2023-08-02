@@ -21,7 +21,7 @@
    
     <div id="Resultats">
         <h2>Résultat</h2>
-        xxxx est le vainqueur !
+       <?php afficherVainqueur() ?>
         <form class="d-flex justify-content-center" action="" method="post">
             <input name="restart" type="submit" value="Nouveau combat">
         </form>
