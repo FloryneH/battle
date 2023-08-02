@@ -22,7 +22,7 @@
         restart();
     }
 
-    list($player, $adversaire) = getInfoInSession();
+    list($player, $adversaire, $recap) = getInfoInSession();
 ?>
 
 <html lang="fr">
@@ -84,12 +84,6 @@
 
         <div id="combats">
 
-            <?php
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['attaque'])) {
-                    echo $player['name']." à attaqué et ".$adversaire['name']." à perdu ".$player['attaque']." PV";
-                }
-            ?>
-
             <form id='actionForm' action="match.php" method="post" onsubmit="return checkLife();">
 
                 <div class="d-flex justify-content-center">
@@ -104,12 +98,12 @@
             </form>
         </div>
 
-        <div id="combats">
+        <div id="combatsResume">
             <h2>Combat</h2>
             <ul>
 
                 <li>
-                    <i class="fa-solid fa-khanda p-1"></i> test
+                    <?php echo $recap ?? ''; ?>
                 </li>
 
             </ul>

@@ -9,7 +9,7 @@
     if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
         list($formErrors, $player, $adversaire) = checkErrorsForm();
         if (empty($formErrors)) {
-            setInfoInSession($player, $adversaire);
+            setInfoInSession($player, $adversaire, $recap);
             header('Location: match.php');
         }
     }
