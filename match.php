@@ -4,7 +4,7 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
-
+    DataBase();
     // Vérifie si les variables de session 'player' et 'adversaire' ne sont pas définies ou sont vides
     if (!isset($_SESSION['player']) || !isset($_SESSION['adversaire'])) {
         header('Location: index.php');
@@ -21,7 +21,7 @@
     if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {
         restart();
     }
-
+  
     list($player, $adversaire, $recap) = getInfoInSession();
 ?>
 

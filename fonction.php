@@ -1,4 +1,64 @@
 <?php  
+    function dataBase() {
+
+        $servername = 'localhost';
+        $username = 'root';
+
+        try{
+            $connection = new PDO("mysql:host=$servername;dbname=Battle", $username);
+            //On définit le mode d'erreur de PDO sur Exception
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            echo 'Connexion réussie';
+
+            $player = $_POST['player'];
+
+            $name = $player["name"];
+            $created_at = date("Y-m-d");
+            $mana =  $player["mana"];
+            $attaque =  $player["attaque"];
+            $initial_life =  $player["sante"];
+
+            $sth = $connection->prepare("
+                INSERT INTO 
+                personnages(name, created_at, mana, attaque, initial_life)
+                VALUE (:name, :created_at, :mana, :attaque, :sante)
+            ");
+            $sth -> execute(array(
+                ':name' => $name,
+                ':created_at' => $created_at,
+                ':mana' => $mana,
+                ':attaque' => $attaque,
+                ':sante' => $initial_life
+            ));
+
+            $adversaire = $_POST['adversaire'];
+            
+            $adversaireName = $adversaire["name"];
+            $adversaireCreatedAt = date("Y-m-d");
+            $adversaireMana = $adversaire["mana"];
+            $adversaireAttaque = $adversaire["attaque"];
+            $adversaireInitialLife = $adversaire["sante"];
+
+            $sth = $connection->prepare("
+                INSERT INTO 
+                personnages(name, created_at, mana, attaque, initial_life)
+                VALUES (:adversaire_name, :adversaire_created_at, :adversaire_mana, :adversaire_attaque, :adversaire_initial_life)
+            ");
+
+            $sth->execute(array(
+                ':adversaire_name' => $adversaireName,
+                ':adversaire_created_at' => $adversaireCreatedAt,
+                ':adversaire_mana' => $adversaireMana,
+                ':adversaire_attaque' => $adversaireAttaque,
+                ':adversaire_initial_life' => $adversaireInitialLife
+            ));
+
+            echo "Entrée ajoutée dans la table";
+        }
+        catch(PDOException $e){
+            echo "Erreur : " . $e->getMessage();
+        }
+    }
     
     function getInfoInSession(): array
     {

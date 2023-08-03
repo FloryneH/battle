@@ -4,6 +4,7 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
+    DataBase();
 
     // Gestion du formulaire de création de personnage
     if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
@@ -13,7 +14,6 @@
             header('Location: match.php');
         }
     }
-
     list($player, $adversaire) = getInfoInSession();
 ?>
 
