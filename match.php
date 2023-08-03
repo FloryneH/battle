@@ -4,7 +4,7 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
-    DataBase();
+    getConnection();
     // Vérifie si les variables de session 'player' et 'adversaire' ne sont pas définies ou sont vides
     if (!isset($_SESSION['player']) || !isset($_SESSION['adversaire'])) {
         header('Location: index.php');
@@ -23,6 +23,8 @@
     }
   
     list($player, $adversaire, $recap) = getInfoInSession();
+
+    dump($GLOBALS);
 ?>
 
 <html lang="fr">

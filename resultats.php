@@ -4,12 +4,12 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
-    DataBase();
+    getConnection();
 
     if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {
         restart();
     }
-
+    dump($GLOBALS);
 ?>
 
 <!DOCTYPE html>
