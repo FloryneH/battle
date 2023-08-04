@@ -1,64 +1,125 @@
 <?php  
-    function getConnection() {
 
-        list($player, $adversaire, $recap) = getInfoInSession();
-        $servername = 'localhost';
-        $username = 'root';
+    class Database
+    {
+        // Variable statique pour stocker l'instance unique de la classe
+        private static $instance;
 
-        try{
-            $connection = new PDO("mysql:host=$servername;dbname=Battle", $username);
-            //On définit le mode d'erreur de PDO sur Exception
-            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo 'Connexion réussie';
+        // Propriétés de la connexion à la base de données
+        private $connection;
+        private $servername = 'localhost';
+        private $username = 'root';
+        private $dbname = 'Battle';
 
-            return $connection;
+        // Constructeur privé pour empêcher l'instanciation directe depuis l'extérieur
+        private function __construct()
+        {
+            try {
+                $this->connection = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username);
+                //On définit le mode d'erreur de PDO sur Exception
+                $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                echo 'Connexion réussie';
+            } catch (PDOException $e) {
+                echo "Erreur : " . $e->getMessage();
+            }
         }
-        catch(PDOException $e){
-            echo "Erreur : " . $e->getMessage();
+
+        // Méthode statique pour récupérer l'instance unique de la classe
+        public static function getInstance()
+        {
+            if (!self::$instance) {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
+
+        // Méthode pour récupérer la connexion à la base de données
+        public function getConnection()
+        {
+            return $this->connection;
         }
     }
 
+    function getConnection() {
+        $db = Database::getInstance();
+        return $db->getConnection();
+    }
+
     function getNewPlayer ($connection) {
-        list($player, $adversaire) = getInfoInSession();
+        // Récupérer les données du formulaire
+        $player = $_POST['player'];
+        $adversaire = $_POST['adversaire'];
 
-        $name = $player["name"];
-        $created_at = date("Y-m-d");
-        $mana =  $player["mana"];
-        $attaque =  $player["attaque"];
-        $initial_life =  $player["sante"];
-
+        // Vérifier si le joueur existe déjà dans la base de données
+        $playerName = $player["name"];
         $sth = $connection->prepare("
-            INSERT INTO 
-            personnages(name, created_at, mana, attaque, initial_life)
-            VALUE (:name, :created_at, :mana, :attaque, :sante)
+            SELECT * FROM personnages WHERE name = :playerName
         ");
-        $sth -> execute(array(
-            ':name' => $name,
-            ':created_at' => $created_at,
-            ':mana' => $mana,
-            ':attaque' => $attaque,
-            ':sante' => $initial_life
-        ));
-        
+        $sth->execute(array(':playerName' => $playerName));
+        $existingPlayer = $sth->fetch(PDO::FETCH_ASSOC);
+
+        if ($existingPlayer) {
+            // Si le joueur existe déjà, associez les statistiques du formulaire aux données de la base de données
+            $player["mana"] = $existingPlayer["mana"];
+            $player["attaque"] = $existingPlayer["attaque"];
+            $player["sante"] = $existingPlayer["initial_life"];
+        } else {
+            // Sinon, insérer un nouveau joueur dans la base de données
+            $created_at = date("Y-m-d");
+            $mana = $player["mana"];
+            $attaque = $player["attaque"];
+            $initial_life = $player["sante"];
+
+            $sth = $connection->prepare("
+                INSERT INTO 
+                personnages(name, created_at, mana, attaque, initial_life)
+                VALUE (:name, :created_at, :mana, :attaque, :sante)
+            ");
+            $sth->execute(array(
+                ':name' => $playerName,
+                ':created_at' => $created_at,
+                ':mana' => $mana,
+                ':attaque' => $attaque,
+                ':sante' => $initial_life
+            ));
+        }
+
+        // Vérifier si l'adversaire existe déjà dans la base de données
         $adversaireName = $adversaire["name"];
-        $adversaireCreatedAt = date("Y-m-d");
-        $adversaireMana = $adversaire["mana"];
-        $adversaireAttaque = $adversaire["attaque"];
-        $adversaireInitialLife = $adversaire["sante"];
-
         $sth = $connection->prepare("
-            INSERT INTO 
-            personnages(name, created_at, mana, attaque, initial_life)
-            VALUES (:adversaire_name, :adversaire_created_at, :adversaire_mana, :adversaire_attaque, :adversaire_initial_life)
+            SELECT * FROM personnages WHERE name = :adversaireName
         ");
+        $sth->execute(array(':adversaireName' => $adversaireName));
+        $existingAdversaire = $sth->fetch(PDO::FETCH_ASSOC);
 
-        $sth->execute(array(
-            ':adversaire_name' => $adversaireName,
-            ':adversaire_created_at' => $adversaireCreatedAt,
-            ':adversaire_mana' => $adversaireMana,
-            ':adversaire_attaque' => $adversaireAttaque,
-            ':adversaire_initial_life' => $adversaireInitialLife
-        ));
+        if ($existingAdversaire) {
+            // Si l'adversaire existe déjà, associez les statistiques du formulaire aux données de la base de données
+            $adversaire["mana"] = $existingAdversaire["mana"];
+            $adversaire["attaque"] = $existingAdversaire["attaque"];
+            $adversaire["sante"] = $existingAdversaire["initial_life"];
+        } else {
+            // Sinon, insérer un nouvel adversaire dans la base de données
+            $created_at = date("Y-m-d");
+            $mana = $adversaire["mana"];
+            $attaque = $adversaire["attaque"];
+            $initial_life = $adversaire["sante"];
+
+            $sth = $connection->prepare("
+                INSERT INTO 
+                personnages(name, created_at, mana, attaque, initial_life)
+                VALUE (:name, :created_at, :mana, :attaque, :sante)
+            ");
+            $sth->execute(array(
+                ':name' => $adversaireName,
+                ':created_at' => $created_at,
+                ':mana' => $mana,
+                ':attaque' => $attaque,
+                ':sante' => $initial_life
+            ));
+        }
+
+        // Mettre à jour les données dans la session avec les valeurs associées
+        setInfoInSession($player, $adversaire, null);
 
         echo "Entrée ajoutée dans la table";
     }

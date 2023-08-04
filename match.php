@@ -4,7 +4,8 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
-    getConnection();
+    $connection = getConnection();
+
     // Vérifie si les variables de session 'player' et 'adversaire' ne sont pas définies ou sont vides
     if (!isset($_SESSION['player']) || !isset($_SESSION['adversaire'])) {
         header('Location: index.php');
@@ -35,6 +36,7 @@
             integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
             crossorigin="anonymous">
     </script>
+    <script src="index.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="public/bootstrap.css">
