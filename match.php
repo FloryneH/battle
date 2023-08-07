@@ -1,31 +1,31 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
-require 'fonction.php';
+    require_once __DIR__ . '/vendor/autoload.php';
+    require 'fonction.php';
 
-// Démarre une nouvelle session ou restaure une session existante
-session_start();
-$connection = getConnection();
+    // Démarre une nouvelle session ou restaure une session existante
+    session_start();
+    $connection = getConnection();
 
-// Vérifie si les variables de session 'player' et 'adversaire' ne sont pas définies ou sont vides
-if (!isset($_SESSION['player']) || !isset($_SESSION['adversaire'])) {
-    header('Location: index.php');
-}
+    // Vérifie si les variables de session 'player' et 'adversaire' ne sont pas définies ou sont vides
+    if (!isset($_SESSION['player']) || !isset($_SESSION['adversaire'])) {
+        header('Location: index.php');
+    }
 
-if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["attaque"])) {
-    attaque();
-}
+    if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["attaque"])) {
+        attaque();
+    }
 
-if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["soin"])) {
-    soin();
-}
+    if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["soin"])) {
+        soin();
+    }
 
-if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {
-    restart();
-}
+    if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {
+        restart();
+    }
 
-list($player, $adversaire, $recap) = getInfoInSession();
+    list($player, $adversaire, $recap) = getInfoInSession();
 
-dump($GLOBALS);
+    dump($GLOBALS);
 ?>
 
 <html lang="fr">

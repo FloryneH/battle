@@ -4,7 +4,11 @@
 
     // Démarre une nouvelle session ou restaure une session existante
     session_start();
-    getConnection();
+    $connection = getConnection();
+
+    $winner = afficherVainqueur();
+    dump($winner);
+    insertCombat($connection, $winner);
 
     if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {
         restart();
@@ -25,7 +29,6 @@
    
     <div id="Resultats">
         <h2>Résultat</h2>
-       <?php afficherVainqueur() ?>
         <form class="d-flex justify-content-center" action="" method="post">
             <input name="restart" type="submit" value="Nouveau combat">
         </form>
