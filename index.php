@@ -9,13 +9,11 @@ $connection = getConnection();
 // Gestion du formulaire de création de personnage
 if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
     list($formErrors, $player, $adversaire) = checkErrorsForm();
-    if (empty($formErrors)) {
-        setInfoInSession($player, $adversaire, $recap);
+    if (empty($formErrors)) {;
+        insertPlayers($connection);
         header('Location: match.php');
-        getNewPlayer($connection);
     }
 }
-dump($GLOBALS);
 ?>
 
 <html lang="fr">
@@ -23,9 +21,7 @@ dump($GLOBALS);
 <head>
     <title>Battle</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" 
-            integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" 
-            crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous">
     </script>
     <script src="index.js"></script>
 
