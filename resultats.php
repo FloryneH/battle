@@ -7,7 +7,6 @@
     $connection = getConnection();
 
     $winner = afficherVainqueur();
-    dump($winner);
     insertCombat($connection, $winner);
 
     if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["restart"])) {

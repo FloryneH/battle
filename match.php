@@ -25,7 +25,7 @@
 
     list($player, $adversaire, $recap) = getInfoInSession();
 
-    dump($GLOBALS);
+    dump($GLOBALS, $recap);
 ?>
 
 <html lang="fr">
@@ -98,7 +98,13 @@
 
         <div id="combatsResume">
             <h2>Combat</h2>
-            <?php recap() ?>
+            <ul style="max-height: 300px; overflow: auto">
+                <?php foreach ($recap ?? [] as $action) { ?>
+                    <li>
+                        <i class="fa-solid fa-khanda p-1"></i><?php echo $action ?>
+                    </li>
+                <?php } ?>
+            </ul>
         </div>
     </div>
 

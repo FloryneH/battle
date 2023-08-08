@@ -105,7 +105,7 @@
         return [$player, $adversaire, $recap];
     }
 
-    function setInfoInSession(?array $player, ?array $adversaire, ?string $recap): void
+    function setInfoInSession(?array $player, ?array $adversaire, ?array $recap): void
     {
         $_SESSION["player"] = $player;
         $_SESSION["adversaire"] = $adversaire;
@@ -117,16 +117,19 @@
         unset($_SESSION["player"]);
         unset($_SESSION["adversaire"]);
         unset($_SESSION["recap"]);
+
     }
 
     function insertCombat($connection, $winner) {
         list($player, $adversaire, $recap) = getInfoInSession();
+        $logCombat = json_encode($recap);
+
         $sth = $connection->prepare("INSERT INTO `combats` (id_personnage1, id_personnage2, id_winner, log_combat) VALUES (:idJoueur, :idAdversaire, :id_winner, :log_combat)");
         $sth->execute(array(
             ':idJoueur' => $player["id"],
             ':idAdversaire' => $adversaire["id"],
             ':id_winner' => (int)$winner,
-            ':log_combat' => "",
+            ':log_combat' => $logCombat,
         ));
     }
 
@@ -171,15 +174,15 @@
     function attaque()
     {
         list($player, $adversaire, $recap) = getInfoInSession();
-
         $adversaire['initial_life'] -= $player['attaque'];
 
         if ($player['initial_life'] <= 0 || $adversaire['initial_life'] <= 0) {
-            $recap .= $player['name'] . " a attaqué " . $adversaire['name'] . ". " . $adversaire['name'] . " a perdu " . $player['attaque'] . "PV. <br>";
+            $recap[] = $player['name'] . " à tué " . $adversaire['name'] . ".";
             setInfoInSession($player, $adversaire, $recap);
             header('Location: resultats.php');
         }
-        $recap .= $player['name'] . " a attaqué " . $adversaire['name'] . ". " . $adversaire['name'] . " a perdu " . $player['attaque'] . "PV. <br>";
+
+        $recap[] = $player['name'] . " a attaqué " . $adversaire['name'] . ". " . $adversaire['name'] . " a perdu " . $player['attaque'] . "PV.";
 
         setInfoInSession($player, $adversaire, $recap);
         adversaireAction();
@@ -198,7 +201,7 @@
             $player['soins_disabled'] = false;
             $player['mana'] -= 20;
             $player['initial_life'] += 10;
-            $recap .= $player['name'] . " à utilisé Soins il à récupéré 10PV. <br>";
+            $recap[] = $player['name'] . " à utilisé Soins il à récupéré 10PV";
         }
 
         setInfoInSession($player, $adversaire, $recap);
@@ -208,13 +211,14 @@
     function adversaireAction()
     {
         list($player, $adversaire, $recap) = getInfoInSession();
-
         $action = rand(0, 1);
 
         if ($action === 0) {
             $player['initial_life'] -= $adversaire['attaque'];
-            $recap .= $adversaire['name'] . " a attaqué " . $player['name'] . ". " . $player['name'] . " a perdu " . $adversaire['attaque'] . "PV. <br>";
+            $recap[] = $adversaire['name'] . " a attaqué " . $player['name'] . ". " . $player['name'] . " a perdu " . $adversaire['attaque'] . "PV.";
+
             if ($player['initial_life'] <= 0 || $adversaire['initial_life'] <= 0) {
+                $recap[] = $adversaire['name'] . " à tué " . $player['name'] . ".";
                 header('Location: resultats.php');
                 exit();
             }
@@ -223,27 +227,11 @@
             } else {
                 $adversaire['mana'] -= 20;
                 $adversaire['initial_life'] += 10;
-                $recap .= $adversaire['name'] . " à utilisé Soins il à récupéré 10PV. <br>";
+                $recap[] = $adversaire['name'] . " à utilisé Soins il à récupéré 10PV.";
             }
         }
 
         setInfoInSession($player, $adversaire, $recap);
-    }
-
-    function recap()
-    {
-        list($player, $adversaire, $recap) = getInfoInSession();
-
-        if (isset($recap)) {
-            $lines = explode("<br>", $recap);
-            echo "<ul>";
-            foreach ($lines as $line) {
-                if (!empty($line)) {
-                    echo "<li>" . $line . "</li>";
-                }
-            }
-            echo "</ul>";
-        }
     }
 
     function restart()
@@ -263,13 +251,10 @@
         } elseif ($player['initial_life'] <= 0) {
             echo "<p>" . $adversaire['name'] . " est le vainqueur !</p>";
             $winner = $adversaire["id"];
-            dump($winner." winner = adversaire");
         } elseif ($adversaire['initial_life'] <= 0) {
             echo "<p>" . $player['name'] . " est le vainqueur !</p>";
             $winner = $player["id"];
-            dump($winner." winner = plyaer");
         }
-        dump($winner);
         return $winner;
     }
 ?>
