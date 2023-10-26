@@ -2,21 +2,17 @@
 
     class Database
     {
-        // Variable statique pour stocker l'instance unique de la classe
         private static $instance;
 
-        // Propriétés de la connexion à la base de données
         private $connection;
         private $servername = 'localhost';
         private $username = 'root';
         private $dbname = 'Battle';
 
-        // Constructeur privé pour empêcher l'instanciation directe depuis l'extérieur
         private function __construct()
         {
             try {
                 $this->connection = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username);
-                //On définit le mode d'erreur de PDO sur Exception
                 $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 echo 'Connexion réussie';
             } catch (PDOException $e) {
@@ -24,7 +20,6 @@
             }
         }
 
-        // Méthode statique pour récupérer l'instance unique de la classe
         public static function getInstance()
         {
             if (!self::$instance) {
@@ -33,7 +28,6 @@
             return self::$instance;
         }
 
-        // Méthode pour récupérer la connexion à la base de données
         public function getConnection()
         {
             return $this->connection;
@@ -55,14 +49,11 @@
 
     function insertPlayers($connection): void
     {
-        // Récupérer les données du formulaire
         $player = $_POST['player'];
         $adversaire = $_POST['adversaire'];
 
-        // Vérifier si le joueur existe déjà dans la base de données
         $existingPlayer = getPlayer($connection, $player["name"]);
         if (!$existingPlayer) {
-            // Sinon, insérer un nouveau joueur dans la base de données
             $player['created_at'] = date("Y-m-d");
 
             $sth = $connection->prepare("
@@ -77,10 +68,8 @@
             $player = $existingPlayer;
         }
 
-        // Vérifier si l'adversaire existe déjà dans la base de données
         $existingAdversaire = getPlayer($connection, $adversaire["name"]);
         if (!$existingAdversaire) {
-            // Sinon, insérer un nouvel adversaire dans la base de données
             $adversaire['created_at'] = date("Y-m-d");
             $sth = $connection->prepare("
                     INSERT INTO personnages (name, created_at, mana, attaque, initial_life)
@@ -93,7 +82,6 @@
             $adversaire = $existingAdversaire;
         }
 
-        // Mettre à jour les données dans la session avec les valeurs associées
         setInfoInSession($player, $adversaire, null);
     }
 

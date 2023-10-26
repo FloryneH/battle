@@ -2,7 +2,6 @@
     require_once __DIR__ . '/vendor/autoload.php';
     require 'fonction.php';
 
-    // Démarre une nouvelle session ou restaure une session existante
     session_start();
     $connection = getConnection();
 
@@ -22,7 +21,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <script src="index.js"></script>
 </head>
 <body>
    

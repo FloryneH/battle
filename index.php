@@ -2,11 +2,9 @@
 require_once __DIR__ . '/vendor/autoload.php';
 require 'fonction.php';
 
-// Démarre une nouvelle session ou restaure une session existante
 session_start();
 $connection = getConnection();
 
-// Gestion du formulaire de création de personnage
 if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
     list($formErrors, $player, $adversaire) = checkErrorsForm();
     if (empty($formErrors)) {;
@@ -23,7 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous">
     </script>
-    <script src="index.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="public/bootstrap.css">
@@ -45,15 +42,12 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
                         <label for="perso_select">Choose a Player</label>
                         <select name="perso_select" id="perso_select">
                             <?php
-                            // Récupérer une connexion à la base de données
                             $connection = getConnection();
 
-                            // Exécuter une requête SQL pour récupérer tous les personnages
                             $sth = $connection->prepare("SELECT name FROM personnages");
                             $sth->execute();
                             $players = $sth->fetchAll(PDO::FETCH_COLUMN);
 
-                            // Afficher chaque nom de personnage dans la liste déroulante
                             foreach ($players as $playerName) {
                                 echo "<option value=\"$playerName\">$playerName</option>";
                             }
@@ -103,15 +97,12 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST' && isset($_POST["fight"])) {
                         <label for="adversaire_select">Choose an opponent</label>
                         <select name="adversaire_select" id="adversaire_select">
                             <?php
-                            // Récupérer une connexion à la base de données
                             $connection = getConnection();
 
-                            // Exécuter une requête SQL pour récupérer tous les personnages
                             $sth = $connection->prepare("SELECT name FROM personnages");
                             $sth->execute();
                             $players = $sth->fetchAll(PDO::FETCH_COLUMN);
 
-                            // Afficher chaque nom de personnage dans la liste déroulante
                             foreach ($players as $playerName) {
                                 echo "<option value=\"$playerName\">$playerName</option>";
                             }
